@@ -1,0 +1,56 @@
+创建数据库
+create database `xxx`
+删除数据库
+drop database `xxx`
+查看数据
+show databases
+show tables
+使用数据库，表格
+use `xxx`
+选择
+select `xx` from `xxx`
+
+
+表格操作
+查看创建`xxx`的语句
+show create database `xxx`
+show create table `xxx`
+查看表
+describe `xxx`
+删除表
+drop table `xxx`
+
+
+修改表的名字
+alter table  old rename as new
+增加表的字段
+alter table `xxx` add  `xx` 属性
+修改表的字段
+alter table `xxx` modify `xx` 新的属性 -只修改约束-
+alter table `xxx` change old new 属性 -可字段名和属性
+删除表的字段
+alter table `xxx` drop `xx`
+
+
+// 添加外键
+//方式一
+//学生的gradeid去引用年级表的gradeid
+//定义外键
+//给这个外键添加约束(执行引用),references 引用
+create table if not exists `student`(
+    id int(4) not null auto_increment comment'学号',
+    name varchar(30) not null default '匿名' comment'姓名',
+    pwd varchar(20) not null default '1234567' comment'密码',
+    sex varchar(2) not null default '女' comment'性别',
+    birthday datatime default null comment'生日',
+    gradeid int(10) not null comment'年级',
+    address varchar(100) default null comment'地址',
+    email varchar(50) default null comment'邮箱',
+    primary key(`id`),
+    key`FK_gradeid`,
+    cinstraint `FK_gradeid` foreign key (`gradeid`) references `grade`(`gradeid`)
+)engine=innoDB default charset=utf8
+
+方式二
+alter table `student`
+add constraint `FK_gradeid` foreign key(`gradeid`) references `grade`(`gradeid`)

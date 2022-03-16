@@ -1,0 +1,38 @@
+--添加insert--
+insert into 表名('字段一','字段二','字段三') values('值1','值2','值3'),('值1','值2','值3')...
+插入单个字段
+insert into `grade`(`gradename`) values('大一');
+插入多个字段
+insert into `student`(`name`) values('张三'),('李四'),('王二');//往一列插入多个资料
+insert into `student`(`name`,`sex`,`age`,),
+values('张三','男','22'),('张三','男','22'),('张三','男','22');
+--字段可以省略，但值必须和字段一一对应--
+
+
+--修改update--
+update 对象（条件）新信息
+修改一个属性
+update `student` set `name`=`xxx` where id=1;
+update `student` set `name`=`xxx`//如果不带条件，则或全部修改
+修改多个属性，逗号隔开
+update `student` set `name`=`xxx`,`email`=`xxxxxxx` where id=1;
+
+条件：=  != (<>) <  <=  >  >=     between...and...     and       or
+
+可通过多个条件定位信息
+update `student` set `name`=`xxx` where id=1 and `sex`=`女`;
+update `student` set `name`=`xxx` where id<=1 or `id`>4;
+value 可以是值亦可以是变量
+
+truncate 表名    //完全清空数据库，表的结构和索引不会变
+和delete的异同
+            相同点：都可以删除数据，不会破坏表的结构
+            不同点：truncate重新设置自增列，不会影响事务
+
+        delete删除数据库现象
+            innodb：重启之后自增列会重置，（从1开始，数据是存在内存之中）
+            myisam：继续从上一个文件开始，（储存在文件之中）
+--删除delete--
+delete from 表名 [where 条件]
+delete from `student` //不带条件意味着删库（需要跑路了）
+delete from `student` where id=9

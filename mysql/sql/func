@@ -1,0 +1,59 @@
+--- 数学函数 ---
+select abs(-9);--取绝对值
+select ceiling(9.345);-- 向上取整
+select floor(8.97);-- 向下取整
+select rand();--生成随机数
+select sign(-12);--判断符号，0返回0， 负数返回-1，正数返回1
+
+
+----字符串函数----
+select char_length('fjdkghdf');--查询字符串长度
+select concat('a','s','d','a','c');--拼接字符串
+select insert('风潇潇兮易水寒',2,0,"dtm");--插入，从某个位置开始替换某个长度的字符串
+select lower();--转为小写
+select upper();--转为大写
+select instr('handlerfunc','d');--返回第一次出现的子串索引
+select replace('handlerfunc','d','ce');--替换子串
+select substr('handlerfunc',3,3);--返回子串，(初始串，起始位置，子串长度)
+select reverse('handlerfunc');--反转字符串
+
+
+--时间和日期--、
+select current_date();--获取当前日期
+select curdate();获取当前日期
+select mow();获取当前时间
+select localtime();获取本地时间
+select sysdate();获取系统日期
+
+select year(now());--年
+select month(now());--月
+select day(now());--日
+select hour(now());--时
+select minute(now());--分
+select second(now());--秒
+
+---系统---
+select system_user();--当前用户
+select user();--当前用户
+selsct version();--版本
+
+
+
+-----聚合函数-----
+--count--能够统计表中的数据
+select count(`borndate`) from student;-- count(字段)，会忽略该字段所有null值
+selecr count(*) from student; --不会忽略null值，本质，计算行数，统计每个字段的每个数据计算
+select count(1) from student; --不会忽略null值，本质，计算行数，每行统计一个
+
+select sum(studentresult) from result; --计算分数总和
+select ave(studentresult) from result; --计算平均分
+select max(studentresult) from result; --计算最高分
+select min(studentresult) from result; --计算最低分
+
+-----查询不同课程的最高分，最低分，平均分(根据不同课程分组)-----
+select `subjectname`, max(studentresult), min(studentresult), ave(studentresult) as 平均分
+from result as r
+inner join `subject` as sub
+on r.subjectnum = sub.subjectnum
+group by r.subjectnum --由什么字段分组
+having 平均分 >=80; --处理由group by 过滤后的必要条件 

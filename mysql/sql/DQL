@@ -1,0 +1,237 @@
+database query language:数据查询语言
+
+---指定查询字段：select 字段 from 表
+select version  --  查询系统版本
+select 100*3-1 as `计算结果`  -- 计算
+select @@auto_increment_increment  --  查询自增步长（变量）
+select *from `student`  --  查询全部学生资料
+select *from `result`  --  查询全部学生成绩
+
+--指定查询字段--select 字段 from 表
+select `name`,`id` from `student`//查询学生name和id
+
+--别名（包括字段和表）--select 字段 as 别名 from 表
+select `name` as 姓名,`id` as 序号 from `student`
+
+--函数 concat(a,b)--字符串连接
+select comcat(`姓名：`,`name`) as `新名字` from `student`
+
+--去重distinct--
+select *from `result`//查询全部学生成绩
+select `studentnum` from result //查询哪些学生参加了考试-- 结果会有重复的--
+select distinct`studentnum` from result // 去重查询
+
+-- 查询成绩并加一分查看 --
+select `studentnum`,`studentresult`+1 as ‘提分后’ from `result`
+
+
+---数据库中的表达式： 文本，列，null，函数，计算表达式，系统变量
+select 表达式 from 表名
+
+
+---逻辑运算符 
+--与  and &&  a and b , a && b ;
+--或  or  ||  a or b , a || b ;
+--非  not !   a not b , a ! b ;
+
+---查询分数在95~100的学生
+select `studentnum`,`studentresult` from `result`
+where `studentresult`<=100 and `studentresult`>=95;
+
+select `studentnum`,`studentresult` from `result`
+where `studentresult`<=100 && `studentresult`>=95;
+
+select `studentnum`,`studentresult` from `result`
+where `studentresult` between 95 and 100 ;
+
+---查询学号不为1000的学生
+select `studentnum`,`studentresult` from `result`
+where `studentrnum`!=1000 and `studentrnum`!=1010 ;
+select `studentnum`,`studentresult` from `result`
+where not `studentrnum`=1000 ;
+
+
+--模糊查询--比较运算符
+    is null                 a is null           值为空，则结果为真
+    is not null             a is nit null       值不为空，则结果为真
+    between ... and ...     a between b and c   a 在b与c之间, 则结果为真
+    like                    a like b            a 像 b ，则结果为真
+    in                      a in(a1,a2,a3,...)  a 在(a1,a2,a3,...)中，则结果为真
+
+-- 查询姓刘的同学
+-- like   % 代表任意个字符   _ 代表一个任意字符
+select `studentnum`,`studentname` from `student` 查询学生
+where `studentname` like '刘%'; -- 查询姓刘的同学
+
+-- 查询姓刘的同学,名字后面只有一个字
+select `studentnum`,`studentname` from `student`
+where `studentname` like '刘_';
+
+-- 查询名字中间有某个字的同学
+select `studentnum`,`studentname` from `studentd`
+where `studentname` like '%某个字%';--不要使用_,因为你不能保证每个人名字刚好有三个字
+
+-- in--查询编号为1001，1002，1003的学生
+select `studentnum`,`studentname` from `student`
+where `studentnum` in (100,1002,1003);
+
+--查询地址为xxx的
+select `studentnum`,`studentname` from `student`
+where `address` in ('xx','xxx')
+
+--nul    not null--查询地址为空的学生
+select `studentnum`,`studentname` from `student`
+where `address`=' ' or `address` is nul;
+
+--查询没有出生日期的同学-- null
+select `studentnum`,`studentname` from `student`
+where `birthday` is nul;
+
+
+
+-------联表查询 == Left Join === Inner Join === Right Join--
+join on 连接查询
+where 等值查询
+-- 查询参加科考试的学生(学号，姓名，科目编号，分数)
+/*思路
+----1.分析需求， 需要查询的字段来自哪些表，（连接查询）
+----2.确定哪种连接查询（7种）；
+----3.找出相同字段
+----4.确定判断条件
+*/
+select `s.studentnum`,`studentname`,`subjectnum`,`studentresult`
+from `student` as s 
+inner join `result` as r 
+where s.studentnum = r.studentnum ;
+
+select `s.studentnum`,`studentname`,`subjectnum`,`studentresult`
+from `student` as s 
+left join `result` as r 
+on s.studentnum = r.studentnum ;
+
+select `s.studentnum`,`studentname`,`subjectnum`,`studentresult`
+from `student` as s 
+right join `result` as r 
+on s.studentnum = r.studentnum ;
+
+区别
+Inner Join  返回两个表都有的值
+Left Join   右边中没有但左表中有的值会一并返回
+Right Join  左表中没有但右边中有的值会一并返回
+
+--查询缺考的同学--
+select `s.studentnum`,`studentname`,`subjectnum`,`studentresult`
+from `student` as s 
+left join `result` as r 
+on s.studentnum = r.studentnum 
+where studentresult = null
+
+
+-----查询参加了考试的学生信息（学号，姓名，科目，分数）
+/*思路
+----1.分析需求， 需要查询的字段来自哪些表,student, result, subject(三表连接查询)
+----2.确定哪种连接查询(7种)(先查询前两者，再联后者)
+----3.找出相同字段(student, result,)(result, subject)
+----4.确定判断条件
+*/
+select s.studentnum,studentname,subjectname,studentresult 
+from student as s
+right join result as r 
+on s.studentnum = r.studentnum 
+inner subject as sub 
+on r.subjectnum = sub.subjectnum 
+
+--1.需要查询那些数据 select ...
+--2.从哪几个表 from 表 join 连接的表 on 交叉条件 
+--3.多张表查询，先查前两者，再连接第三张表，再依次连接后面的表
+
+
+
+----自连接---把一张表、当作两张一模一样的表
+--查询父子信息--
+select a.catagoryname as 父栏目,b.catagoryname as 子栏目
+from category as a, catagory as b
+where a.catagoryid = b.pid ;
+
+--查询学员所属的年级(学号，姓名，年级名称)
+select studentnum, studentname, gradename 
+from student as s 
+inner join grade as g 
+on s.gradeid = g.gradeid;
+
+--查询各年级科目（科目名称，年级名称）
+select subjectname, gradename 
+from subject as s 
+inner join grade as g 
+on s.gradeid = g.gradeid;
+
+-----查询参加了科目xxx考试的学生信息(学号,姓名,科目,分数)
+/*思路
+----1.分析需求， 需要查询的字段来自哪些表,student, result, subject(三表连接查询)
+----2.确定哪种连接查询(7种)(先查询前两者，再联后者)
+----3.找出相同字段(student, result,)(result, subject)
+----4.确定判断条件
+*/
+select s.studentnum,studentname,subjectname,studentresult 
+from student as s
+right join result as r 
+on s.studentnum = r.studentnum 
+inner subject as sub 
+on r.subjectnum = sub.subjectnum 
+where subjeectname = 'xxx';
+
+
+
+-----排序-----order by 
+--升序 == asc  --- 降序  desc
+---语法: order by 排序对象 排序形式
+
+-----查询参加了科目xxx考试的学生信息(学号,姓名,科目,分数), 并降序排序
+select s.studentnum,studentname,subjectname,studentresult 
+from student as s
+right join result as r 
+on s.studentnum = r.studentnum 
+inner subject as sub 
+on r.subjectnum = sub.subjectnum 
+where subjectname = 'xxx'
+order by studentresult asc ;
+
+
+------分页--缓解数据库压力, 提升人的观感体验
+-- 语法: limit 起始数据下表  页面大小 // (n-1)*pagesize,pagesize
+-----查询参加了科目xxx考试的学生信息(学号,姓名,科目,分数), 并降序排序
+select s.studentnum,studentname,subjectname,studentresult 
+from student as s
+right join result as r 
+on s.studentnum = r.studentnum 
+inner subject as sub 
+on r.subjectnum = sub.subjectnum 
+where subjectname = 'xxx'
+order by studentresult asc 
+limit 0, 10 ;--第0 条开始，五条数据
+
+
+---- 子查询----where
+-----查询参加了科目xxx考试的学生信息(学号,姓名,科目,分数), 并降序排序, 且分数不小于80
+select s.studentnum,studentname,subjectname,studentresult 
+from student as s
+right join result as r 
+on s.studentnum = r.studentnum 
+where studentresult >= 80 and  subjectnum = (
+    select subjectnum from subject
+    where subjectname = 'xxx' 
+)
+order by studentresult asc 
+limit 0, 10 ;
+
+---再进一步
+-----查询参加了科目xxx考试的学生信息(学号,姓名,科目,分数), 并降序排序, 且分数不小于80
+select s.studentnum,studentname,subjectname,studentresult from student 
+where studentnum = (
+    select studentnum from result 
+    where studentresult >= 80 and subjectnum = (
+        select subjectnum from subject where subjectname = 'xxx' 
+    )
+)
+order by studentresult asc 
+limit 0, 10 ;

@@ -1,0 +1,28 @@
+--事务--acid
+原子性: 事务的所有操作，同时成功，或者同时失败
+一致性: 事务执行前后状态一致
+持久性: 事务未提交，若服务器宕机或断电，则回到开启之前的状态，若事务以提交，即使服务器宕机或者断电，也不会被改变。
+隔离性: 不同事物之间不能相互影响
+
+create database shop character set utf8 collate utf_8_general_ci;
+use shop;
+create table account(
+    `id` int(4) not null auto_increment,
+    `name` varchar(20) not null,
+    `money` decimal(9,2) not null,
+    primary key (`id`)
+)engine=innodb default charset=utf8;
+
+insert into account (`name`,`money`) values('A','2000'),('B','4000');
+
+---事务的执行过程---
+--开启--执行语句--关闭事务--
+set autocommit=0  --将自动提交关闭, 在mysql中默认是开启的, autocommit=1
+begin transaction //或者 start transaction ---开启事务
+update account set money=money-500 where name = `A`
+update account set money=money+500 where name = `B`
+--成功此则提交(commit)---失败则回滚(rollback)--
+--可用savapointer xxx设置多个保存点, 用releace savepointer xxx释放设置的保存点!\
+--使用 rollback into xxx 将事务回滚到标记点
+commit;--提交, 事务结束
+set autocommit=1; 将提交设置为默认值

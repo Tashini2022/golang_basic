@@ -1,0 +1,14 @@
+create table `testmd5`(
+    `id` int(4) not null,
+    `name` varchar(20) not null,
+    `pwd` varchar(20) not null,
+    primary key `id`
+)engine = innodb default charset=utf8;
+
+insert into testmd5 values(`1`,`zhangsan`,`12123`),(`2`,`lisi`,`12345`),(`3`,`wanger`,`13456`),(`4`,`mazi`,`23456`);
+
+--加密:通常在在传入的时候就进行
+insert into testmd5 values(`1`,`zhangsan`,md5(12123)), (`2`,`lisi`,`md5(12345)), (`3`,`wanger`,md5(13456)), (`4`,`mazi`,md5(23456));
+
+--校验密码--将用户传入的数据加密后和数据库比对
+select * from testmd5 where `name`='麻子', and `pwd`=md5(23456)
